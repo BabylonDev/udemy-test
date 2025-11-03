@@ -3,8 +3,10 @@ extends CharacterBody3D
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 var mouse_sensitivity := 0.003
+var _attack_direction: Vector3 = Vector3.ZERO
 const min_boundary: float = -60
 const max_boundary: float = 10
+const attack_move_speed: float = 8.0
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -38,6 +40,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
+	handle_slashing_physics_frame(delta)
 	move_and_slide()
 
 func _input(event: InputEvent) -> void:
@@ -94,3 +97,14 @@ func look_toward_direction(direction: Vector3, delta: float) -> void:
 
 func slash_attack() -> void:
 	rig.travel("Slash")
+	_attack_direction = get_movement_direction()
+	if _attack_direction.is_zero_approx():
+		_attack_direction = -rig_pivot.transform.basis.z.normalized()
+
+func handle_slashing_physics_frame(delta: float) -> void:
+	print(rig.is_slashing())
+	if not rig.is_slashing():
+		return
+	velocity.x = _attack_direction.x * attack_move_speed
+	velocity.z = _attack_direction.z * attack_move_speed
+	look_toward_direction(_attack_direction, delta)
