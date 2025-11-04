@@ -26,6 +26,11 @@ class_name CharacterRig
 ## State machine playback controller for managing animation states
 @onready var playback: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/playback")
 
+@onready var skeleton_3d: Skeleton3D = $CharacterRig/GameRig/Skeleton3D
+@onready var villager_01: MeshInstance3D = $CharacterRig/GameRig/Skeleton3D/Villager_01
+@onready var villager_02: MeshInstance3D = $CharacterRig/GameRig/Skeleton3D/Villager_02
+@onready var villager_meshes: Array[MeshInstance3D] = [villager_01, villager_02]
+
 ## Speed at which animations blend between states
 const animation_speed: float = 10.0
 
@@ -63,3 +68,8 @@ func is_idle() -> bool:
 ## @return bool: True if in "Slash" state, false otherwise
 func is_slashing() -> bool:
 	return playback.get_current_node() == "Slash"
+
+func set_active_mesh(active_mesh: MeshInstance3D) -> void:
+	for mesh in skeleton_3d.get_children():
+		mesh.visible = false
+	active_mesh.visible = true
