@@ -32,6 +32,7 @@ func _ready():
 @onready var vertical_pivot: Node3D = $HorizontalPivot/VerticalPivot
 @onready var rig_pivot: Node3D = $RigPivot
 @onready var rig: Node3D = $RigPivot/Rig
+@onready var attack_cast : RayCast3D = %AttackCast
 
 func _physics_process(delta: float) -> void:
 	# Toggle mouse capture with the cancel action (usually Esc).
@@ -41,7 +42,7 @@ func _physics_process(delta: float) -> void:
 	# Handle jump input (only when on the floor).
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-    
+	
 	# Movement: compute desired direction and update animations.
 	var direction := get_movement_direction()
 	rig.update_animation_tree(direction)
@@ -101,7 +102,7 @@ func toggle_mouse_mode() -> void:
 	# Immediately snap the smooth camera arm to the current pivot transform
 	# so the camera doesn't jump visibly when toggling capture.
 	$SmoothCameraArm.global_transform = vertical_pivot.global_transform
-    
+	
 func get_movement_direction() -> Vector3:
 	# Compute movement direction relative to the horizontal pivot's orientation.
 	var direction := Vector3.ZERO
@@ -136,6 +137,7 @@ func slash_attack() -> void:
 	# If there's no input direction, use the rig pivot's forward direction.
 	if _attack_direction.is_zero_approx():
 		_attack_direction = rig_pivot.transform.basis.z.normalized()
+	attack_cast.clear_exceptions()
 
 func handle_slashing_physics_frame(delta: float) -> void:
 	# When slashing, move the character slightly in the attack direction.
@@ -144,6 +146,7 @@ func handle_slashing_physics_frame(delta: float) -> void:
 	velocity.x = _attack_direction.x * attack_move_speed
 	velocity.z = _attack_direction.z * attack_move_speed
 	look_toward_direction(_attack_direction, delta)
+	attack_cast.deal_damage()
 
 func handle_idle_physics_frame(delta: float, direction: Vector3) -> void:
 	# When idle, ensure the character faces the movement direction center smoothly.
