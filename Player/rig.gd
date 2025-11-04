@@ -27,8 +27,8 @@ class_name CharacterRig
 @onready var playback: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/playback")
 
 @onready var skeleton_3d: Skeleton3D = $CharacterRig/GameRig/Skeleton3D
-@onready var villager_01: MeshInstance3D = $CharacterRig/GameRig/Skeleton3D/Villager_01
-@onready var villager_02: MeshInstance3D = $CharacterRig/GameRig/Skeleton3D/Villager_02
+@onready var villager_01: MeshInstance3D = skeleton_3d.get_node("Villager_01")
+@onready var villager_02: MeshInstance3D = skeleton_3d.get_node("Villager_02")
 @onready var villager_meshes: Array[MeshInstance3D] = [villager_01, villager_02]
 
 ## Speed at which animations blend between states
