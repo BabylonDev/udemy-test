@@ -1,6 +1,11 @@
 extends CharacterBody3D
+class_name Enemy
+
+@export var max_health: float = 100.0
 
 @onready var rig: CharacterRig = $Rig
+@onready var health_component: HealthComponent = $HealthComponent
 
 func _ready() -> void:
     rig.set_active_mesh(rig.villager_meshes.pick_random())
+    health_component.update_max_health(max_health)

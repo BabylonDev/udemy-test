@@ -15,5 +15,7 @@ func deal_damage() -> void:
 	if not is_colliding():
 		return
 	var collider = get_collider()
-	print(collider)  # Debug print, replace with actual damage system
-	add_exception(collider)  # Prevent multiple hits on the same target
+	if collider is Enemy:
+		collider.health_component.take_damage(25.0)  # Example damage value
+		print("Hit enemy: %s" % collider)
+		add_exception(collider)  # Prevent multiple hits on the same target
